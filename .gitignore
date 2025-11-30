@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Environment variables (credentials)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test output
+coverage/
+.nyc_output/

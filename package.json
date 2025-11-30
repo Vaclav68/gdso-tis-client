@@ -1,0 +1,11 @@
+{
+  "name": "gdso-tis-client",
+  "version": "1.0.0",
+  "description": "Client GDSO TIS (Tire Information Service)",
+  "type": "module",
+  "scripts": {
+    "ons": "node gdso-ons-resolver.js",
+    "client": "node gdso-client.js",
+    "test": "node gdso-client.js"
+  }
+}

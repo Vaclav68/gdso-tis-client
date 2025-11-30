@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:gdso.org)",
+      "WebSearch",
+      "WebFetch(domain:gepir.gs1.org)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
