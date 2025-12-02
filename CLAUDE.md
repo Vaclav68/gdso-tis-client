@@ -133,10 +133,34 @@ node gdso-ons-resolver.js "urn:epc:id:sgtin:..."
 ## Configuration (.env)
 
 ```bash
-GDSO_USERNAME=your_username
-GDSO_PASSWORD=your_password
-GDSO_TOKEN_URL=https://authentication-api.testing.gdso.org/getIdToken
+# Testing (actif)
+GDSO_USERNAME=ralph.achatz.fr
+GDSO_PASSWORD=788078807880Aa!
+
+# Production (en attente de validation - demande envoyée le 02/12/2024)
+# GDSO_PROD_USERNAME=???
+# GDSO_PROD_PASSWORD=???
 ```
+
+## Comptes GDSO
+
+| Environnement | Portail | Username | Status |
+|---------------|---------|----------|--------|
+| Testing | https://manage.testing.gdso.org | ralph.achatz.fr | Actif |
+| Production | https://manage.gdso.org | ??? | En attente (Kbis envoyé) |
+
+## Conversion EPC Hex → SGTIN
+
+Pour convertir un code EPC lu par scanner RFID (ex: Unitech P902) :
+
+```bash
+# EPC Hex: 301854AAC3C51150FA1A5D84
+# → SGTIN: urn:epc:id:sgtin:086699.0988229.72915508612
+# → Fabricant: Michelin
+# → GTIN-13: 0866999882290
+```
+
+Le header `0x30` = SGTIN-96. Partition 6 = Company Prefix 6 digits.
 
 ## API Endpoints (Standard GDSO)
 
