@@ -1,0 +1,56 @@
+# GDSO TIS API - Docker Ignore
+# Fichiers à exclure du build Docker
+
+# Dépendances
+node_modules/
+
+# Fichiers de configuration locale
+.env
+.env.local
+.env.*.local
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+docs/
+
+# Tests
+tests/
+*.test.js
+coverage/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Fichiers temporaires
+tmp/
+temp/
+*.tmp
+
+# Cache
+.cache/
+.npm/
+
+# OpenAPI spec (non nécessaire en runtime)
+*.yaml
+*.yml
+!docker-compose.yml
+
+# CLI tools (non utilisés par l'API)
+gdso.js
+gdso-ons-resolver.js

@@ -1,0 +1,37 @@
+# GDSO TIS API - Docker Compose
+# Pour déploiement local et Coolify
+
+version: '3.8'
+
+services:
+  gdso-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gdso-api
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - GDSO_ENV=${GDSO_ENV:-production}
+      # Credentials GDSO Testing
+      - GDSO_USERNAME=${GDSO_USERNAME}
+      - GDSO_PASSWORD=${GDSO_PASSWORD}
+      # Credentials GDSO Production
+      - GDSO_PROD_USERNAME=${GDSO_PROD_USERNAME}
+      - GDSO_PROD_PASSWORD=${GDSO_PROD_PASSWORD}
+      # Secret pour l'authentification API
+      - GDSO_API_SECRET=${GDSO_API_SECRET}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

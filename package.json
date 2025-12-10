@@ -1,20 +1,28 @@
 {
   "name": "gdso-tis-client",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Client GDSO TIS (Tire Information Service) - Standard industriel RFID pneus",
   "type": "module",
   "main": "lib/gdso-service.js",
   "scripts": {
-    "start": "node gdso.js",
+    "start": "node --env-file=.env server.js",
+    "dev": "node --env-file=.env --watch server.js",
+    "cli": "node gdso.js",
     "ons": "node gdso-ons-resolver.js",
     "test": "node --test tests/*.test.js",
     "test:sgtin": "node --test tests/sgtin.test.js",
-    "test:utils": "node --test tests/utils.test.js"
+    "test:utils": "node --test tests/utils.test.js",
+    "docker:build": "docker build -t gdso-api .",
+    "docker:run": "docker run -p 3000:3000 --env-file .env gdso-api"
   },
-  "keywords": ["gdso", "tis", "tire", "rfid", "sgtin", "gtin", "ons"],
+  "keywords": ["gdso", "tis", "tire", "rfid", "sgtin", "gtin", "ons", "api", "express"],
   "author": "Ralph Achatz",
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
   }
 }
