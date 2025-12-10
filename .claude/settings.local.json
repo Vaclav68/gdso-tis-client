@@ -3,9 +3,15 @@
     "allow": [
       "WebFetch(domain:gdso.org)",
       "WebSearch",
-      "WebFetch(domain:gepir.gs1.org)"
+      "WebFetch(domain:gepir.gs1.org)",
+      "WebFetch(domain:gdso-org.github.io)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "supabase"
+  ]
 }

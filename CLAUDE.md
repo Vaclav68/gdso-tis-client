@@ -17,33 +17,30 @@ GDSO (Global Data Service Organisation) - Standard industriel pour récupérer l
 │  SGTIN → GTIN-13 → FQDN inversé → DNS NAPTR → URL API       │
 │                                                             │
 │  Exemple:                                                   │
-│  urn:epc:id:sgtin:086699.0762575.xxx                        │
-│  → GTIN-13: 0866997625752                                   │
-│  → FQDN: 2.5.7.5.2.6.7.9.9.6.6.8.0.gtin.gs1.id.testing...   │
-│  → API: https://indus.api.michelin.com/tid-ultim-v1/gdso/   │
+│  urn:epc:id:sgtin:086699.0988229.72916502389                │
+│  → GTIN-13: 0866999882290                                   │
+│  → FQDN: 0.9.2.2.8.8.9.9.9.6.6.8.0.gtin.gs1.id.gdso.org     │
+│  → API: https://api.michelin.com/tid-ultim-v1/gdso/         │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
 │  2. AUTHENTIFICATION                                        │
 │                                                             │
-│  Solution A (Simple): API Basic Auth                        │
-│  POST authentication-api.testing.gdso.org/getIdToken        │
+│  API Basic Auth → JWT Token                                 │
+│  POST https://authentication-api.gdso.org/getIdToken        │
 │  Header: Authorization: Basic base64(user:pass)             │
-│  → Retourne: JWT Token directement                          │
-│                                                             │
-│  Solution B (OAuth): Cognito OpenID Connect                 │
-│  Domain: fuqzxw2k75c49t2fdn.auth.eu-central-1.amazoncognito │
-│  Client ID: 3661gkmsqil29qtb24rvq3o4tb                      │
+│  → Retourne: JWT Token (valide 1h)                          │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
 │  3. APPEL API FABRICANT                                     │
 │                                                             │
-│  GET {manufacturer_url}/tire/{sgtin}                        │
-│  Header: Authorization: Bearer {jwt_token}                  │
+│  ⚠️ IMPORTANT: Le format d'URL varie selon le fabricant !   │
 │                                                             │
-│  POST {manufacturer_url}/tires  (batch, max 100 UIIs)       │
-│  Body: ["urn:epc:id:sgtin:...", "urn:epc:id:sgtin:..."]     │
+│  Michelin:    GET {baseUrl}/{sgtin}  (PAS de /tire/)        │
+│  Autres:      GET {baseUrl}/tire/{sgtin}                    │
+│                                                             │
+│  Header: Authorization: Bearer {jwt_token}                  │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -78,27 +75,28 @@ Check digit = (10 - (Σ digits × alternating 3,1)) % 10
 
 ## Fabricants GDSO (Company Prefix GS1)
 
-### Membres GDSO avec API connue
-| Company Prefix | Fabricant | Pays | API Testing |
-|----------------|-----------|------|-------------|
-| 086699 | **Michelin** | FR | `indus.api.michelin.com` |
-| 051324, 051342 | **Continental** | DE/US | `qal.tdp.azure.continental.cloud` |
-| 8019227 | **Pirelli** | IT | `dev-api.pirelli.com` |
+### Fabricants testés et fonctionnels (Production) ✅
+| Company Prefix | Fabricant | URL Pattern | Encode | API |
+|----------------|-----------|-------------|--------|-----|
+| 086699 | **Michelin** | `{baseUrl}/{sgtin}` | Oui | `api.michelin.com` |
+| 54520007 | **Goodyear** | `{baseUrl}/{sgtin}` | Non | `api-etrto.goodyear.eu` |
 
-### Autres membres GDSO (API via ONS)
+### Fabricants sans API GDSO ❌
+| Company Prefix | Fabricant | Pays | Raison |
+|----------------|-----------|------|--------|
+| 8808956, 8801956 | **Kumho** | KR | Full Member GDSO (Sept 2024), API TIS non configurée (NAPTR absent). RFID interne depuis 2013. Partenariat Beontag 2024 pour ESPR. |
+
+### Autres membres GDSO (à tester)
 | Company Prefix | Fabricant | Pays |
 |----------------|-----------|------|
+| 051324, 051342 | Continental | DE/US |
+| 8019227 | Pirelli | IT |
 | 019343, 4902027 | Bridgestone | JP |
-| 697662, 019502 | Goodyear | US |
 | 8801954 | Hankook | KR |
-| 8801956 | **Kumho** | KR |
 | 4907587 | Yokohama | JP |
-| 4981910 | Sumitomo (Falken/Dunlop) | JP |
 | 8807622 | Nexen | KR |
-| 6924064 | Giti | SG |
-| 8019205 | Prometeon | IT |
 
-> **Note**: Les Company Prefix coréens commencent par `880`, japonais par `49`, italiens par `80`
+> **Note**: Chaque fabricant a son propre format d'URL. Utiliser la résolution ONS pour découvrir l'API, puis ajuster `manufacturers.js`
 
 ## Structure du Projet
 
@@ -133,13 +131,13 @@ node gdso-ons-resolver.js "urn:epc:id:sgtin:..."
 ## Configuration (.env)
 
 ```bash
-# Testing (actif)
+# Testing
 GDSO_USERNAME=ralph.achatz.fr
 GDSO_PASSWORD=788078807880Aa!
 
-# Production (en attente de validation - demande envoyée le 02/12/2024)
-# GDSO_PROD_USERNAME=???
-# GDSO_PROD_PASSWORD=???
+# Production
+GDSO_PROD_USERNAME=transports.achatz-businessdev
+GDSO_PROD_PASSWORD=788078807880Aa!
 ```
 
 ## Comptes GDSO
@@ -147,7 +145,7 @@ GDSO_PASSWORD=788078807880Aa!
 | Environnement | Portail | Username | Status |
 |---------------|---------|----------|--------|
 | Testing | https://manage.testing.gdso.org | ralph.achatz.fr | Actif |
-| Production | https://manage.gdso.org | ??? | En attente (Kbis envoyé) |
+| Production | https://manage.gdso.org | transports.achatz-businessdev | Actif (10/12/2024) |
 
 ## Conversion EPC Hex → SGTIN
 
